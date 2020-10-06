@@ -22,6 +22,7 @@ var menuItemsUrl =
   "https://davids-restaurant.herokuapp.com/menu_items.json?category=";
 var menuItemsTitleHtml = "snippets/menu-items-title.html";
 var menuItemHtml = "snippets/menu-item.html";
+var aboutHtmlUrl = "snippets/about.html";
 
 // Convenience function for inserting innerHTML for 'select'
 var insertHtml = function (selector, html) {
@@ -62,29 +63,28 @@ var switchMenuToActive = function () {
 
 // On page load (before images or CSS)
 document.addEventListener("DOMContentLoaded", function (event) {
+  // TODO: STEP 0: Look over the code from
+  // *** start ***
+  // to
+  // *** finish ***
+  // below.
+  // We changed this code to retrieve all categories from the server instead of
+  // simply requesting home HTML snippet. We now also have another function
+  // called buildAndShowHomeHTML that will receive all the categories from the server
+  // and process them: choose random category, retrieve home HTML snippet, insert that
+  // random category into the home HTML snippet, and then insert that snippet into our
+  // main page (index.html).
+  //
+  // TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
+  // so it can be called when server responds with the categories data.
 
-// TODO: STEP 0: Look over the code from
-// *** start ***
-// to
-// *** finish ***
-// below.
-// We changed this code to retrieve all categories from the server instead of
-// simply requesting home HTML snippet. We now also have another function
-// called buildAndShowHomeHTML that will receive all the categories from the server
-// and process them: choose random category, retrieve home HTML snippet, insert that
-// random category into the home HTML snippet, and then insert that snippet into our
-// main page (index.html).
-//
-// TODO: STEP 1: Substitute [...] below with the *value* of the function buildAndShowHomeHTML,
-// so it can be called when server responds with the categories data.
-
-// *** start ***
-// On first load, show home view
-showLoading("#main-content");
-$ajaxUtils.sendGetRequest(
-  allCategoriesUrl,
-  buildAndShowHomeHTML, // ***** <---- TODO: STEP 1: Substitute [...] ******
-  true); // Explicitly setting the flag to get JSON from server processed into an object literal
+  // *** start ***
+  // On first load, show home view
+  showLoading("#main-content");
+  $ajaxUtils.sendGetRequest(
+    allCategoriesUrl,
+    buildAndShowHomeHTML, // ***** <---- TODO: STEP 1: Substitute [...] ******
+    true); // Explicitly setting the flag to get JSON from server processed into an object literal
 });
 // *** finish **
 
@@ -127,6 +127,42 @@ function buildAndShowHomeHTML (categories) {
     false); // False here because we are getting just regular HTML from the server, so no need to process JSON.
 }
 
+// This result of this function is that the about page content is shown in the browser
+function buildAndShowAboutHtml() {
+  $ajaxUtils.sendGetRequest(
+    aboutHtmlUrl,
+    function(aboutHtml) {
+      var x = randomNumber1To5();
+      // console.log(x);  // uncomment to verify that our number of stars matches the random number
+      var aboutHtmlInsertMainPage = aboutHtml;
+      
+      // There are 5 stars. A rating of 3 stars would have 3 filled stars followed by 2
+      // star outlines. For loop goes through 5. The calculation of (our random number
+      // minus the loop index) will be greater than 0 the exact number of filled stars
+      // we need. (For instance, random number == 3, then 3-0, 3-1, and 3-2 all give
+      // True when compared > 0, so a random number == 3 would go in the "solid star"
+      // branch 3 times, and the "normal star" branch for the other 2 iterations.)
+      for (var idx = 0; idx < 5; idx += 1) {
+        var searchStr = "star"+(idx+1);
+        if (x-idx > 0) {
+          var classes = "fas fa-star";  // solid star (filled)
+          aboutHtmlInsertMainPage = insertProperty(aboutHtmlInsertMainPage,searchStr,classes);
+        } else {
+          var classes = "far fa-star";  // normal star (outline, not solid)
+          aboutHtmlInsertMainPage = insertProperty(aboutHtmlInsertMainPage,searchStr,classes);
+        }
+      }
+      insertHtml("#main-content", aboutHtmlInsertMainPage);
+    },
+    false
+  );
+}
+
+function randomNumber1To5() {
+  var rando = Math.floor(Math.random() * 5) + 1;
+  return rando;
+}
+
 
 // Given array of category objects, returns a random category object.
 function chooseRandomCategory (categories) {
@@ -154,6 +190,16 @@ dc.loadMenuItems = function (categoryShort) {
   $ajaxUtils.sendGetRequest(
     menuItemsUrl + categoryShort,
     buildAndShowMenuItemsHTML);
+};
+
+// This function is invoked in the corresponding onclick event in index.html
+dc.loadAbout = function() {
+  showLoading("#main-content");
+  $ajaxUtils.sendGetRequest(
+    aboutHtmlUrl,
+    buildAndShowAboutHtml,
+    false
+  );
 };
 
 
