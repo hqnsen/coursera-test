@@ -53,11 +53,36 @@ var switchMenuToActive = function () {
   classes = classes.replace(new RegExp("active", "g"), "");
   document.querySelector("#navHomeButton").className = classes;
 
+  // Remove 'active' from about button
+  var classes = document.querySelector("#navAboutButton").className;
+  classes = classes.replace(new RegExp("active", "g"), "");
+  document.querySelector("#navAboutButton").className = classes;
+
   // Add 'active' to menu button if not already there
   classes = document.querySelector("#navMenuButton").className;
   if (classes.indexOf("active") === -1) {
     classes += " active";
     document.querySelector("#navMenuButton").className = classes;
+  }
+};
+
+// Remove the class 'active' from home and switch to Menu button
+var switchAboutToActive = function () {
+  // Remove 'active' from home button
+  var classes = document.querySelector("#navHomeButton").className;
+  classes = classes.replace(new RegExp("active", "g"), "");
+  document.querySelector("#navHomeButton").className = classes;
+
+  // Remove 'active' from menu button
+  var classes = document.querySelector("#navMenuButton").className;
+  classes = classes.replace(new RegExp("active", "g"), "");
+  document.querySelector("#navMenuButton").className = classes;
+
+  // Add 'active' to about button if not already there
+  classes = document.querySelector("#navAboutButton").className;
+  if (classes.indexOf("active") === -1) {
+    classes += " active";
+    document.querySelector("#navAboutButton").className = classes;
   }
 };
 
@@ -132,6 +157,7 @@ function buildAndShowAboutHtml() {
   $ajaxUtils.sendGetRequest(
     aboutHtmlUrl,
     function(aboutHtml) {
+      switchAboutToActive();
       var x = randomNumber1To5();
       // console.log(x);  // uncomment to verify that our number of stars matches the random number
       var aboutHtmlInsertMainPage = aboutHtml;
@@ -152,6 +178,9 @@ function buildAndShowAboutHtml() {
           aboutHtmlInsertMainPage = insertProperty(aboutHtmlInsertMainPage,searchStr,classes);
         }
       }
+      var searchStr = "starText";
+      var starText = " "+x+"-star rating";
+      aboutHtmlInsertMainPage = insertProperty(aboutHtmlInsertMainPage,searchStr,starText);
       insertHtml("#main-content", aboutHtmlInsertMainPage);
     },
     false
