@@ -46,7 +46,7 @@ var insertProperty = function (string, propName, propValue) {
   return string;
 };
 
-// Remove the class 'active' from home and switch to Menu button
+// Remove the class 'active' from other nav buttons and switch to Menu button
 var switchMenuToActive = function () {
   // Remove 'active' from home button
   var classes = document.querySelector("#navHomeButton").className;
@@ -66,7 +66,7 @@ var switchMenuToActive = function () {
   }
 };
 
-// Remove the class 'active' from home and switch to Menu button
+// Remove the class 'active' from other nav buttons and switch to About button
 var switchAboutToActive = function () {
   // Remove 'active' from home button
   var classes = document.querySelector("#navHomeButton").className;
